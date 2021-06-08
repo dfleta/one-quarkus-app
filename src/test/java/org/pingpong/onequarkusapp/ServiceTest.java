@@ -6,6 +6,7 @@ import javax.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.pingpong.onequarkusapp.dominio.NormalItem;
+import org.pingpong.onequarkusapp.dominio.Orden;
 import org.pingpong.onequarkusapp.dominio.Usuaria;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -26,7 +27,6 @@ public class ServiceTest {
 	
 	// Completa la definicion y el mapping
 	// de la clase NormalItem a la tabla t_items
-
     @Test
     public void test_mapping_normalItem() {
         NormalItem elixir = em.find(NormalItem.class, "Elixir of the Mongoose");
@@ -45,5 +45,17 @@ public class ServiceTest {
         Assertions.assertThat(elfo.getNombre()).isEqualTo("Doobey");
         Assertions.assertThat(elfo.getDestreza()).isEqualTo(15);
 	}
+
+    // Completa la definicion y el mapping
+	// de la clase Orden a la tabla t_ordenes
+	// El id de esta clase ha de seguir una estrategia
+	// Identity
+	@Test 
+	public void test_mapping_orden() {
+		Orden pedido = em.find(Orden.class, 1L);
+        Assertions.assertThat(pedido).isNotNull();
+        Assertions.assertThat(pedido.getUser().getNombre()).isEqualTo("Doobey");
+		Assertions.assertThat(pedido.getItem().getNombre()).isEqualTo("Elixir of the Mongoose");
+		}
     
 }
