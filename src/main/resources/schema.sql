@@ -10,4 +10,5 @@ insert into t_users (user_nom, user_prop) values ('Doobey', 15);
 insert into t_users (user_nom, user_prop) values ('Hermione', 100);
 insert into t_items (item_nom, item_prop, item_tipo) values ('+5 Dexterity Vest', 20, 'NormalItem');
 insert into t_items (item_nom, item_prop, item_tipo) values ('Elixir of the Mongoose', 7, 'NormalItem');
-insert into t_ordenes (ord_id, ord_user, ord_item) values (1,'Doobey','Elixir of the Mongoose');
+insert into t_ordenes (ord_id, ord_user, ord_item) values (1L,'Doobey','Elixir of the Mongoose');
+insert into t_ordenes (ord_id, ord_user, ord_item) values (2L,'Hermione','+5 Dexterity Vest');
