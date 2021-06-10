@@ -25,15 +25,17 @@ public class ServiceARTest {
     ServiceItem servicio;
 
     /**
-	 * Tests sobre los mappings
+	 * MAPPINGS de la entidades a las tablas de la BBDD.
 	 * 
 	 * Observa el esquema de la base de datos que espera 
 	 * la aplicacion en el fichero:
 	 * src/main/resources/schema.sql
 	 */
 	
-	// Completa la definicion y el mapping
-	// de la clase NormalItem a la tabla t_items
+	/**
+	 * Completa la definicion y el mapping
+	 * de la clase NormalItem a la tabla t_items
+	 */
     @Test
     public void test_mapping_normalItem() {
         NormalItemAR elixir = em.find(NormalItemAR.class, "Elixir of the Mongoose");
@@ -43,8 +45,10 @@ public class ServiceARTest {
         Assertions.assertThat(elixir.getTipo()).isEqualTo("NormalItem");
     }
 
-    // Completa la definicion y el mapping
-	// de la clase Usuaria a la tabla t_users
+	/**
+	 * Completa la definicion y el mapping
+	 * de la clase Usuaria a la tabla t_users
+	 */
 	@Test
 	public void test_mapping_usuaria() {
 		UsuariaAR elfo = em.find(UsuariaAR.class, "Doobey");
@@ -53,10 +57,11 @@ public class ServiceARTest {
         Assertions.assertThat(elfo.getDestreza()).isEqualTo(15);
 	}
 
-    // Completa la definicion y el mapping
-	// de la clase Orden a la tabla t_ordenes
-	// El id de esta clase ha de seguir una estrategia
-	// Identity
+    /**
+	 * Completa la definicion y el mapping
+	 * de la clase Orden a la tabla t_ordenes
+	 * El id de esta clase ha de seguir una estrategia Identity
+	 */
 	@Test 
 	public void test_mapping_orden() {
 		OrdenAR pedido = em.find(OrdenAR.class, 1L);
@@ -64,6 +69,8 @@ public class ServiceARTest {
         Assertions.assertThat(pedido.getUser().getNombre()).isEqualTo("Doobey");
 		Assertions.assertThat(pedido.getItem().getNombre()).isEqualToIgnoringCase("Elixir of the Mongoose");
 	}
+
+	/** SERVICIO */
 
     /**
 	 * Crea una clase llamada ServiceItem e indica
@@ -126,9 +133,9 @@ public class ServiceARTest {
 
 	/**
 	 * Implementa el metodo cargaOrden del servicio.
-	 * Devuelve el pedido con el nombre indicado, si existe.
-     * Si no existe, devuelve un objeto usuaria con sus propiedades
-     * y valores como se indica en los casos test.
+	 * Devuelve una lista con los pedidos de la usuaria 
+	 * con el nombre indicado, si existe.
+     * Si no existe, devuelve una lista vacía.
 	 */
 
     @Test
@@ -137,8 +144,10 @@ public class ServiceARTest {
 		List<OrdenAR> ordenes = servicio.cargaOrden("Hermione");
 		Assertions.assertThat(ordenes).isNotNull();
 		Assertions.assertThat(ordenes).hasSize(1);
-		Assertions.assertThat(ordenes).allMatch(orden -> orden.getUser().getNombre().equalsIgnoreCase("Hermione"));
-		Assertions.assertThat(ordenes).allMatch(orden -> orden.getItem().getNombre().equalsIgnoreCase("+5 Dexterity Vest"));
+		Assertions.assertThat(ordenes.get(0).getUser().getNombre()).isEqualToIgnoringCase("Hermione");
+		Assertions.assertThat(ordenes.get(0).getItem().getNombre()).isEqualTo("+5 Dexterity Vest");
+		// Assertions.assertThat(ordenes).allMatch(orden -> orden.getUser().getNombre().equalsIgnoreCase("Hermione"));
+		// Assertions.assertThat(ordenes).allMatch(orden -> orden.getItem().getNombre().equalsIgnoreCase("+5 Dexterity Vest"));
 	}
     
     @Test
