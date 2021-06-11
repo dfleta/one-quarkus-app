@@ -1,7 +1,6 @@
 package org.pingpong.onequarkusapp.dominio;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -62,6 +61,7 @@ public class OrdenAR extends PanacheEntityBase {
 		return this.getUser().getNombre() + " " + this.getItem().getNombre();
 	}
 
+	// contenido min: loop, if-else, colecciones.
 	public static List<OrdenAR> findByUserName(String name) {
 		List<OrdenAR> ordenes = OrdenAR.listAll();
 		List<OrdenAR> ordenesByName = ordenes.stream().filter(o -> o.getUser().getNombre().equalsIgnoreCase(name)).collect(Collectors.toList());

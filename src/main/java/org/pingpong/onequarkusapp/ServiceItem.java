@@ -35,7 +35,8 @@ public class ServiceItem {
         OrdenAR orden = null;
         Optional<UsuariaAR> usuaria = UsuariaAR.findByIdOptional(usuaria_name);
         Optional<NormalItemAR> item = NormalItemAR.findByIdOptional(item_name);
-        if (usuaria.isPresent() & item.isPresent()) {
+        if (usuaria.isPresent() && item.isPresent() 
+            && usuaria.get().getDestreza() >= item.get().getQuality()) {
             orden = new OrdenAR(usuaria.get(), item.get());
             orden.persist();
         }

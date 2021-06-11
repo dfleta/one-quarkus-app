@@ -170,16 +170,21 @@ public class ServiceARTest {
 	@Test
 	public void test_comanda_ok() {
         Assertions.assertThat(servicio).isNotNull();
-		OrdenAR orden = servicio.comanda("Hermione", "+5 Dexterity Vest");
+		OrdenAR orden = servicio.comanda("Hermione", "Elixir of the Mongoose");
 		Assertions.assertThat(orden).isNotNull();
 		Assertions.assertThat(orden.getId()).isNotZero();
 		Assertions.assertThat(orden.getUser().getNombre()).isEqualTo("Hermione");
-		Assertions.assertThat(orden.getItem().getNombre()).isEqualTo("+5 Dexterity Vest");
+		Assertions.assertThat(orden.getItem().getNombre()).isEqualTo("Elixir of the Mongoose");
+
+		OrdenAR pedido = em.find(OrdenAR.class, 3L);
+        Assertions.assertThat(pedido).isNotNull();
+        Assertions.assertThat(pedido.getUser().getNombre()).isEqualTo("Hermione");
+		Assertions.assertThat(pedido.getItem().getNombre()).isEqualToIgnoringCase("Elixir of the Mongoose");
 	}
 
 	/**
      * Implementa el metodo comanda del servicio
-	 * para que no permita generar pedidos de productos
+	 * para que NO permita generar pedidos de productos
 	 * si no existe la usuaria en la base de datos.
 	 */
 	@Test
@@ -191,11 +196,14 @@ public class ServiceARTest {
 		Assertions.assertThat(profesor).isNotNull();
 		Assertions.assertThat(profesor.getNombre()).isEmpty();
         Assertions.assertThat(profesor.getDestreza()).isZero();
+
+		OrdenAR pedido = em.find(OrdenAR.class, 3L);
+        Assertions.assertThat(pedido).isNull();
 	}
     
 	/**
      * Implementa el metodo comanda del servicio
-	 * para que no permita generar pedidos de productos
+	 * para que NO permita generar pedidos de productos
 	 * si no existe el item en la base de datos.
 	 */
 	@Test
@@ -207,5 +215,38 @@ public class ServiceARTest {
 		Assertions.assertThat(item).isNotNull();
 		Assertions.assertThat(item.getNombre()).isEmpty();
 		Assertions.assertThat(item.getQuality()).isZero();
+
+		OrdenAR pedido = em.find(OrdenAR.class, 3L);
+        Assertions.assertThat(pedido).isNull();
 	}
+
+	/**
+	 * Modifica el metodo comanda para que 
+	 * NO permita generar pedidos de productos
+	 * cuando la destreza de la usuaria sea menor
+	 * que la calidad del Item.
+	 */
+	@Test
+	public void test_comanda_item_sin_pro() {
+		Assertions.assertThat(servicio).isNotNull();
+		OrdenAR orden = servicio.comanda("Doobey", "+5 Dexterity Vest");
+		Assertions.assertThat(orden).isNull();
+
+		OrdenAR pedido = em.find(OrdenAR.class, 3L);
+        Assertions.assertThat(pedido).isNull();
+	}
+
+	/**
+	 * Implementa el metodo comanda para que una usuaria
+	 * pueda ordenar más de un Item a la vez.
+	 * Guarda las ordenes en la base de datos.
+	 * 
+	 * No se crean ordenes si la usuaria no existe previamente
+	 * en la base de datos.
+	 * 
+	 * No se ordenan items que no existan en la base de datos.
+	 */
+
+
+
 }
