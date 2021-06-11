@@ -1,5 +1,7 @@
 package org.pingpong.onequarkusapp;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,5 +43,26 @@ public class ServiceItem {
             orden.persist();
         }
         return orden;
+    }
+
+    // contenido min eval: loop, if-else, colecciones
+    @Transactional
+    public List<OrdenAR> comandaMultiple(String usuaria, List<String> productos) {
+
+        Optional<UsuariaAR> user = UsuariaAR.findByIdOptional(usuaria);
+        if (user.isEmpty()) {
+            return Collections.emptyList();
+        }
+        
+        List<OrdenAR> ordenes = new ArrayList<OrdenAR>();
+
+        OrdenAR orden = null;
+        for (String producto: productos) {
+            orden = this.comanda(user.get().getNombre(), producto);
+            if (orden != null) {
+                ordenes.add(orden);
+            }
+        }
+        return ordenes;      
     }
 }

@@ -2,7 +2,10 @@ package org.pingpong.onequarkusapp;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.*;
@@ -168,18 +171,24 @@ public class ServiceARTest {
      * El metodo devuelve la orden de tipo Orden creada.
 	 */
 	@Test
+	@Transactional
 	public void test_comanda_ok() {
         Assertions.assertThat(servicio).isNotNull();
-		OrdenAR orden = servicio.comanda("Hermione", "Elixir of the Mongoose");
+		OrdenAR orden = servicio.comanda("Hermione", "AgedBrie");
 		Assertions.assertThat(orden).isNotNull();
 		Assertions.assertThat(orden.getId()).isNotZero();
 		Assertions.assertThat(orden.getUser().getNombre()).isEqualTo("Hermione");
-		Assertions.assertThat(orden.getItem().getNombre()).isEqualTo("Elixir of the Mongoose");
+		Assertions.assertThat(orden.getItem().getNombre()).isEqualTo("AgedBrie");
 
-		OrdenAR pedido = em.find(OrdenAR.class, 3L);
-        Assertions.assertThat(pedido).isNotNull();
-        Assertions.assertThat(pedido.getUser().getNombre()).isEqualTo("Hermione");
-		Assertions.assertThat(pedido.getItem().getNombre()).isEqualToIgnoringCase("Elixir of the Mongoose");
+		TypedQuery<OrdenAR> query = em.createQuery("select orden from OrdenAR orden join orden.user user where user.nombre = 'Hermione'", OrdenAR.class);
+		List<OrdenAR> resultado = query.getResultList();
+		
+		// OrdenAR pedido = em.find(OrdenAR.class, 3L);
+        Assertions.assertThat(resultado).isNotNull();
+		Assertions.assertThat(resultado).hasSize(2);
+        Assertions.assertThat(resultado.get(1).getUser().getNombre()).isEqualTo("Hermione");
+		Assertions.assertThat(resultado.get(1).getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
+		em.find(OrdenAR.class, resultado.get(1).getId()).delete();
 	}
 
 	/**
@@ -237,9 +246,11 @@ public class ServiceARTest {
 	}
 
 	/**
-	 * Implementa el metodo comanda para que una usuaria
+	 * Implementa el metodo comandaMultiple para que una usuaria
 	 * pueda ordenar más de un Item a la vez.
 	 * Guarda las ordenes en la base de datos.
+	 * 
+	 * El metodo devuelve las ordenes creadas.
 	 * 
 	 * No se crean ordenes si la usuaria no existe previamente
 	 * en la base de datos.
@@ -247,6 +258,43 @@ public class ServiceARTest {
 	 * No se ordenan items que no existan en la base de datos.
 	 */
 
+	@Test
+	@Transactional
+	public void test_ordenar_multiples_items_ok() {
+		Assertions.assertThat(servicio).isNotNull();
+		List<OrdenAR> ordenes = servicio.comandaMultiple("Hermione", Arrays.asList("AgedBrie", "Elixir of the Mongoose"));
+		Assertions.assertThat(ordenes).isNotEmpty();
+		Assertions.assertThat(ordenes).size().isEqualTo(2);
+
+		OrdenAR pedido = em.find(OrdenAR.class, 3L);
+        Assertions.assertThat(pedido).isNotNull();
+        Assertions.assertThat(pedido.getUser().getNombre()).isEqualTo("Hermione");
+		Assertions.assertThat(pedido.getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
+		pedido = em.find(OrdenAR.class, 4L);
+		Assertions.assertThat(pedido).isNotNull();
+		Assertions.assertThat(pedido.getItem().getNombre()).isEqualToIgnoringCase("Elixir of the Mongoose");
+
+		// Rollback
+		em.find(OrdenAR.class, 4L).delete();
+		em.find(OrdenAR.class, 3L).delete();
+	}
+
+	// No se permiten ordenes si el usuario no existe en la base de datos
+	@Test
+	public void test_ordenar_multiples_items_no_user() {
+		Assertions.assertThat(servicio).isNotNull();
+		List<OrdenAR> ordenes = servicio.comandaMultiple("Severus", Arrays.asList("+5 Dexterity Vest", "Elixir of the Mongoose"));
+		Assertions.assertThat(ordenes).isEmpty();
+	}
+
+	// No se ordenan items que no existan en la base de datos
+	@Test
+	public void test_ordenar_multiples_items_no_item() {
+		Assertions.assertThat(servicio).isNotNull();
+		List<OrdenAR> ordenes = servicio.comandaMultiple("Hermione", Arrays.asList("Guardapelo Salazar", "Reliquias de la Muerte"));
+		Assertions.assertThat(ordenes).isEmpty();
+	}
+	
 
 
 }
