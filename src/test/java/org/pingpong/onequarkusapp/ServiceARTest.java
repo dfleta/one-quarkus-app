@@ -181,14 +181,13 @@ public class ServiceARTest {
 		Assertions.assertThat(orden.getItem().getNombre()).isEqualTo("AgedBrie");
 
 		TypedQuery<OrdenAR> query = em.createQuery("select orden from OrdenAR orden join orden.user user where user.nombre = 'Hermione'", OrdenAR.class);
-		List<OrdenAR> resultado = query.getResultList();
+		List<OrdenAR> pedidos = query.getResultList();
 		
-		// OrdenAR pedido = em.find(OrdenAR.class, 3L);
-        Assertions.assertThat(resultado).isNotNull();
-		Assertions.assertThat(resultado).hasSize(2);
-        Assertions.assertThat(resultado.get(1).getUser().getNombre()).isEqualTo("Hermione");
-		Assertions.assertThat(resultado.get(1).getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
-		em.find(OrdenAR.class, resultado.get(1).getId()).delete();
+        Assertions.assertThat(pedidos).isNotNull();
+		Assertions.assertThat(pedidos).hasSize(2);
+        Assertions.assertThat(pedidos.get(1).getUser().getNombre()).isEqualTo("Hermione");
+		Assertions.assertThat(pedidos.get(1).getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
+		em.find(OrdenAR.class, pedidos.get(1).getId()).delete();
 	}
 
 	/**
@@ -266,17 +265,16 @@ public class ServiceARTest {
 		Assertions.assertThat(ordenes).isNotEmpty();
 		Assertions.assertThat(ordenes).size().isEqualTo(2);
 
-		OrdenAR pedido = em.find(OrdenAR.class, 3L);
-        Assertions.assertThat(pedido).isNotNull();
-        Assertions.assertThat(pedido.getUser().getNombre()).isEqualTo("Hermione");
-		Assertions.assertThat(pedido.getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
-		pedido = em.find(OrdenAR.class, 4L);
-		Assertions.assertThat(pedido).isNotNull();
-		Assertions.assertThat(pedido.getItem().getNombre()).isEqualToIgnoringCase("Elixir of the Mongoose");
-
-		// Rollback
-		em.find(OrdenAR.class, 4L).delete();
-		em.find(OrdenAR.class, 3L).delete();
+		TypedQuery<OrdenAR> query = em.createQuery("select orden from OrdenAR orden join orden.user user where user.nombre = 'Hermione'", OrdenAR.class);
+		List<OrdenAR> pedidos = query.getResultList();
+		
+        Assertions.assertThat(pedidos).isNotNull();
+		Assertions.assertThat(pedidos).hasSize(3);
+        Assertions.assertThat(pedidos.get(1).getUser().getNombre()).isEqualTo("Hermione");
+		Assertions.assertThat(pedidos.get(1).getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
+		Assertions.assertThat(pedidos.get(2).getItem().getNombre()).isEqualToIgnoringCase("Elixir of the Mongoose");
+		em.find(OrdenAR.class, pedidos.get(2).getId()).delete();
+		em.find(OrdenAR.class, pedidos.get(1).getId()).delete();
 	}
 
 	// No se permiten ordenes si el usuario no existe en la base de datos
