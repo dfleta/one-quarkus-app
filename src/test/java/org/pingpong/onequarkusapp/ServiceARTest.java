@@ -279,6 +279,7 @@ public class ServiceARTest {
 
 	// No se permiten ordenes si el usuario no existe en la base de datos
 	@Test
+	@Transactional
 	public void test_ordenar_multiples_items_no_user() {
 		Assertions.assertThat(servicio).isNotNull();
 		List<OrdenAR> ordenes = servicio.comandaMultiple("Severus", Arrays.asList("+5 Dexterity Vest", "Elixir of the Mongoose"));
@@ -287,6 +288,7 @@ public class ServiceARTest {
 
 	// No se ordenan items que no existan en la base de datos
 	@Test
+	@Transactional
 	public void test_ordenar_multiples_items_no_item() {
 		Assertions.assertThat(servicio).isNotNull();
 		List<OrdenAR> ordenes = servicio.comandaMultiple("Hermione", Arrays.asList("Guardapelo Salazar", "Reliquias de la Muerte"));
