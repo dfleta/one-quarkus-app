@@ -9,7 +9,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 @Entity
 @Table(name="t_items")
-public class NormalItemAR extends PanacheEntityBase {
+public class Item extends PanacheEntityBase {
 
     @Id
 	@Column(name="item_nom")
