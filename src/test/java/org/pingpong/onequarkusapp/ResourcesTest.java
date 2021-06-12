@@ -2,6 +2,7 @@ package org.pingpong.onequarkusapp;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.equalTo;
 
 import javax.inject.Inject;
 
@@ -44,6 +45,31 @@ public class ResourcesTest {
             .body(is("Wellcome Ollivanders!"));
     }
 
+    /**
+     * La peticion /usuaria/<nombre>
+     * ha de retornar el nombre y la destreza de la persona 
+	 * indicada de la base de datos.
+     */
+    @Test
+    public void test_get_persona() throws Exception {
 
+        given()
+            .pathParam("nombre", "Doobey")
+        .when()
+            .get("/usuaria/{nombre}")
+        .then()
+            .statusCode(200)
+            .contentType(ContentType.JSON)
+            .body("nombre", equalTo("Doobey"),
+                  "destreza", equalTo(15));
+
+        // Si no existe la usuaria
+        given()
+            .pathParam("nombre", "Severus")
+        .when()
+            .get("/usuaria/{nombre}")
+        .then()
+            .statusCode(404);
+	}
     
 }
