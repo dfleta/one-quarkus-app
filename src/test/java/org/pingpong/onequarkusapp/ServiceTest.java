@@ -294,7 +294,4 @@ public class ServiceTest {
 		List<Orden> ordenes = servicio.comandaMultiple("Hermione", Arrays.asList("Guardapelo Salazar", "Reliquias de la Muerte"));
 		Assertions.assertThat(ordenes).isEmpty();
 	}
-	
-
-
-}
+	}
