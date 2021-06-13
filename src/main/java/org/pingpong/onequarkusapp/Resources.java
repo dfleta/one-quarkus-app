@@ -1,6 +1,6 @@
 package org.pingpong.onequarkusapp;
 
-import java.util.Optional;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -48,12 +48,21 @@ public class Resources {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    // curl -d '{"name":"Banana", "description":"Brings a Gorilla too", "farmer": {"name": "Farmer Rick"}}'
-    // -H "Content-Type: application/json" -X POST http://localhost:8080/fruits
+    // curl -d '{"user": {"nombre": "Hermione"}, "item": {"nombre": "AgedBrie"}}' 
+    // -H "Content-Type: application/json" -X POST http://localhost:8080/ordena -v
     public Response post(@Valid Orden orden) {
         Orden pedido = service.comanda(orden.getUser().getNombre(), orden.getItem().getNombre());
         return pedido != null?
             Response.status(Response.Status.CREATED).entity(pedido).build():
-            Response.status(Response.Status.NOT_FOUND).build(); 
+            Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    @GET
+    @Path("/pedidos/{usuaria}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    // curl -w "\n" http://localhost:8080/pedidos/Hermione -v
+    public List<Orden> list(@PathParam("usuaria") String usuaria) {
+        return service.cargaOrden(usuaria);
     }
 }

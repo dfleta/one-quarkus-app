@@ -4,17 +4,28 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import javax.ws.rs.core.MediaType;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.pingpong.onequarkusapp.dominio.Orden;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
 public class ResourcesTest {
+
+    @Inject
+    EntityManager em;
 
     @Inject
     Resources resources;
@@ -79,11 +90,12 @@ public class ResourcesTest {
      * Ordena un pedido empleando el método POST en la url
      *      /ordena
      * Los parametros necesarios son "usuaria" con el nombre de la persona
-	 * e "item" con el nombre del objeto.
-     * La peticion ha de retornar la orden de pedido y 201
-     * si ha sido generada y 404 en caso contrario.
+	 * e "item" con el nombre del objeto, en un JSON.
+     * La peticion ha de retornar la orden de pedido JSON
+     * y status code 201 si ha sido generada y 404 en caso contrario.
      */
 	@Test
+    @Transactional
     public void test_post_ok() {
 
 		given()
@@ -96,6 +108,15 @@ public class ResourcesTest {
             .contentType(ContentType.JSON)
             .body("user.nombre", equalTo("Hermione"),
                   "item.nombre", equalTo("AgedBrie"));
+        
+        // rollback BBDD
+        TypedQuery<Orden> query = em.createQuery("select orden from Orden orden join orden.user user where user.nombre = 'Hermione'", Orden.class);
+		List<Orden> pedidos = query.getResultList();
+        Assertions.assertThat(pedidos).isNotNull();
+		Assertions.assertThat(pedidos).hasSize(2);
+        Assertions.assertThat(pedidos.get(1).getUser().getNombre()).isEqualTo("Hermione");
+		Assertions.assertThat(pedidos.get(1).getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
+		em.find(Orden.class, pedidos.get(1).getId()).delete();
 	}
 
     // Si la usuaria o el item no existen el controlador devuelve 404
@@ -108,6 +129,35 @@ public class ResourcesTest {
             .post("/ordena")
         .then()
             .statusCode(404);
+
+        given()
+            .body("{\"user\": {\"nombre\": \"Doobey\"}, \"item\": {\"nombre\": \"Varita de Sauco\"}}")
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+		.when()
+            .post("/ordena")
+        .then()
+            .statusCode(404);
     }
-    
+
+    /**
+     * Obten los pedidos de una usuaria mediante
+     * una peticion GET en el endpoint:
+     *      /pedidos/{usuaria}
+     */
+
+    @Test
+    public void testList() {             
+
+        List<Map<String, Object>> pedidos = 
+            given()
+                .contentType(ContentType.JSON)
+            .when()
+                .get("/pedidos/{usuaria}", "Hermione")
+                .as(new TypeRef<List<Map<String, Object>>>() {});
+        
+        Assertions.assertThat(pedidos).hasSize(1);
+        Assertions.assertThat(pedidos.get(0).get("user")).hasFieldOrPropertyWithValue("nombre", "Hermione");
+        Assertions.assertThat(pedidos.get(0).get("item")).hasFieldOrPropertyWithValue("nombre", "+5 Dexterity Vest");
+
+    }    
 }
