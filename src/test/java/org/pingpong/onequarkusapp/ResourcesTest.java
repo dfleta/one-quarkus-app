@@ -28,7 +28,7 @@ public class ResourcesTest {
     EntityManager em;
 
     @Inject
-    Resources resources;
+    ResourcesOlli resources;
     /**
 	 * Implementa una clase Resources que
 	 * añada una API REST a nuestra app.

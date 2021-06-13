@@ -18,10 +18,10 @@ import org.pingpong.onequarkusapp.dominio.Orden;
 import org.pingpong.onequarkusapp.dominio.Usuaria;
 
 @Path("/")
-public class Resources {
+public class ResourcesOlli {
 
     @Inject
-    ServiceItem service;
+    ServiceOlli service;
 
     @GET
     @Consumes(MediaType.TEXT_PLAIN)

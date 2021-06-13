@@ -25,7 +25,7 @@ public class ServiceTest {
     EntityManager em;
 
     @Inject
-    ServiceItem servicio;
+    ServiceOlli servicio;
 
     /**
 	 * MAPPINGS de la entidades a las tablas de la BBDD.

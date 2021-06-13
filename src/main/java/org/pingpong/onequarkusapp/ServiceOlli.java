@@ -13,9 +13,9 @@ import org.pingpong.onequarkusapp.dominio.Orden;
 import org.pingpong.onequarkusapp.dominio.Usuaria;
 
 @ApplicationScoped
-public class ServiceItem {
+public class ServiceOlli {
 
-    public ServiceItem() {}
+    public ServiceOlli() {}
     
     public Usuaria cargaUsuaria(String name) {
         Optional<Usuaria> usuaria = Usuaria.findByIdOptional(name);
