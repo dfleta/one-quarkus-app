@@ -17,26 +17,26 @@ public class ServiceOlli {
 
     public ServiceOlli() {}
     
-    public Usuaria cargaUsuaria(String name) {
-        Optional<Usuaria> usuaria = Usuaria.findByIdOptional(name);
+    public Usuaria cargaUsuaria(String nombre) {
+        Optional<Usuaria> usuaria = Usuaria.findByIdOptional(nombre);
         return usuaria.isPresent()? usuaria.get(): new Usuaria();
     }
 
-    public Item cargaItem(String name) {
-        Optional<Item> item = Item.findByIdOptional(name);
+    public Item cargaItem(String nombre) {
+        Optional<Item> item = Item.findByIdOptional(nombre);
         return item.isPresent()? item.get(): new Item();
     }
 
-    public List<Orden> cargaOrden(String usuaria_name) {
-        return Orden.findByUserName(usuaria_name);
+    public List<Orden> cargaOrden(String usuaria_nombre) {
+        return Orden.findByUserName(usuaria_nombre);
     }
 
     // contenido min eval: if-else
     @Transactional
-    public Orden comanda(String usuaria_name, String item_name) {
+    public Orden comanda(String usuaria_nombre, String item_nombre) {
         Orden orden = null;
-        Optional<Usuaria> usuaria = Usuaria.findByIdOptional(usuaria_name);
-        Optional<Item> item = Item.findByIdOptional(item_name);
+        Optional<Usuaria> usuaria = Usuaria.findByIdOptional(usuaria_nombre);
+        Optional<Item> item = Item.findByIdOptional(item_nombre);
         if (usuaria.isPresent() && item.isPresent() 
             && usuaria.get().getDestreza() >= item.get().getQuality()) {
             orden = new Orden(usuaria.get(), item.get());
