@@ -66,7 +66,7 @@ public class ResourcesTest {
     @Test
     public void test_get_persona() {
 
-        // Si exite la usuaria la respuesta es 200
+        // Si la usuaria existe la respuesta es 200
         given()
             .pathParam("nombre", "Doobey")
         .when()
@@ -77,7 +77,7 @@ public class ResourcesTest {
             .body("nombre", equalTo("Doobey"),
                   "destreza", equalTo(15));
 
-        // Si no existe la usuaria la respuesta es 404
+        // Si la usuaria NO existe la respuesta es 404
         given()
             .pathParam("nombre", "Severus")
         .when()
@@ -146,7 +146,7 @@ public class ResourcesTest {
      */
 
     @Test
-    public void testList() {             
+    public void test_pedidos_usuaria() {             
 
         List<Map<String, Object>> pedidos = 
             given()
@@ -158,6 +158,34 @@ public class ResourcesTest {
         Assertions.assertThat(pedidos).hasSize(1);
         Assertions.assertThat(pedidos.get(0).get("user")).hasFieldOrPropertyWithValue("nombre", "Hermione");
         Assertions.assertThat(pedidos.get(0).get("item")).hasFieldOrPropertyWithValue("nombre", "+5 Dexterity Vest");
+    }
 
-    }    
+     /**
+     * La peticion 
+     *      /item/<nombre>
+     * ha de retornar el nombre y la calidad
+     * del Item indicado de la base de datos.
+     */
+    @Test
+    public void test_get_item() {
+
+        // Si el item existe la respuesta es 200
+        given()
+            .pathParam("nombre", "AgedBrie")
+        .when()
+            .get("/item/{nombre}")
+        .then()
+            .statusCode(200)
+            .contentType(ContentType.JSON)
+            .body("nombre", equalTo("AgedBrie"),
+                  "quality", equalTo(10));
+
+        // Si el item no existe la respuesta es 404
+        given()
+            .pathParam("nombre", "Varita de Sauco")
+        .when()
+            .get("/item/{nombre}")
+        .then()
+            .statusCode(404);
+	}
 }

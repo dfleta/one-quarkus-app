@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.pingpong.onequarkusapp.dominio.Item;
 import org.pingpong.onequarkusapp.dominio.Orden;
 import org.pingpong.onequarkusapp.dominio.Usuaria;
 
@@ -36,7 +37,7 @@ public class ResourcesOlli {
     @Produces(MediaType.APPLICATION_JSON)
     // curl -w "\n" http://localhost:8080/usuaria/Doobey -v
     // curl -w "\n" http://localhost:8080/usuaria/Severus -v
-    public Response get(@PathParam("nombre") String nombre) {
+    public Response gUsuaria(@PathParam("nombre") String nombre) {
         Usuaria usuaria = service.cargaUsuaria(nombre);
         return usuaria.getNombre().isEmpty()? 
             Response.status(Response.Status.NOT_FOUND).build():
@@ -64,5 +65,17 @@ public class ResourcesOlli {
     // curl -w "\n" http://localhost:8080/pedidos/Hermione -v
     public List<Orden> list(@PathParam("usuaria") String usuaria) {
         return service.cargaOrden(usuaria);
+    }
+
+    @GET
+    @Path("/item/{nombre}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    // curl -w "\n" http://localhost:8080/item/AgedBrie -v
+    public Response gItem(@PathParam("nombre") String nombre) {
+        Item item = service.cargaItem(nombre);
+        return item.getNombre().isEmpty()? 
+            Response.status(Response.Status.NOT_FOUND).build():
+            Response.status(Response.Status.OK).entity(item).build();
     }
 }
