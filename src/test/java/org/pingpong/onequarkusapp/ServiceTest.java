@@ -32,12 +32,12 @@ public class ServiceTest {
 	 * 
 	 * Observa el esquema de la base de datos que espera 
 	 * la aplicacion en el fichero:
-	 * src/main/resources/schema.sql
+	 * schema.sql
 	 */
 	
 	/**
 	 * Completa la definicion y el mapping
-	 * de la clase NormalItem a la tabla t_items
+	 * de la clase Item a la tabla t_items
 	 */
     @Test
     public void test_mapping_normalItem() {
@@ -76,7 +76,7 @@ public class ServiceTest {
 	/** SERVICIO */
 
     /**
-	 * Crea una clase llamada ServiceItem e indica
+	 * Crea una clase llamada ServiceOlli e indica
 	 * que es una dependencia Quarkus 
 	 */
 
@@ -112,7 +112,7 @@ public class ServiceTest {
     /**
 	 * Implementa el metodo cargaItem del servicio.
 	 * Devuelve el item con el nombre indicado, si existe.
-     * Si no existe, devuelve un objeto usuaria con sus propiedades
+     * Si no existe, devuelve un objeto Item con sus propiedades
      * y valores como se indica en los casos test.
 	 */
 
