@@ -17,7 +17,7 @@ Realiza un `push` al repo remoto en GitHub **SOLO cuando hayas terminado el proy
 
 ```
             ___
-	     .-^   `--,
+	  .-^   `--,
        /# =========`-_
       /# (--===___====\
      /#   .- --.  . --.|
