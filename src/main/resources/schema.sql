@@ -1,6 +1,6 @@
+drop table t_ordenes if exists;
 drop table t_users if exists;
 drop table t_items if exists;
-drop table t_ordenes if exists;
 create table t_users (
     user_nom varchar(255) not null, 
     user_prop integer, 
@@ -35,5 +35,5 @@ insert into
 insert into 
     t_ordenes (ord_id, ord_user, ord_item) 
     values 
-        (1L,'Doobey','Elixir of the Mongoose'),
-        (2L,'Hermione','+5 Dexterity Vest');
+        (100L,'Doobey','Elixir of the Mongoose'),
+        (200L,'Hermione','+5 Dexterity Vest');

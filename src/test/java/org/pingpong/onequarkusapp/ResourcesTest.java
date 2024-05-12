@@ -7,11 +7,7 @@ import static org.hamcrest.Matchers.equalTo;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,6 +16,10 @@ import org.pingpong.onequarkusapp.dominio.Orden;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 
 @QuarkusTest
 public class ResourcesTest {
@@ -114,9 +114,10 @@ public class ResourcesTest {
 		List<Orden> pedidos = query.getResultList();
         Assertions.assertThat(pedidos).isNotNull();
 		Assertions.assertThat(pedidos).hasSize(2);
-        Assertions.assertThat(pedidos.get(1).getUser().getNombre()).isEqualTo("Hermione");
-		Assertions.assertThat(pedidos.get(1).getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
-		em.find(Orden.class, pedidos.get(1).getId()).delete();
+        Assertions.assertThat(pedidos.get(0).getUser().getNombre()).isEqualTo("Hermione");
+        // AgedBrie tiene id < 100L por lo que entra en el index 0 de pedidos
+		Assertions.assertThat(pedidos.get(0).getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
+		em.find(Orden.class, pedidos.get(0).getId()).delete();
 	}
 
     // Si la usuaria o el item no existen el controlador devuelve 404

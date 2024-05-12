@@ -1,14 +1,7 @@
 package org.pingpong.onequarkusapp;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
-
 import java.util.Arrays;
 import java.util.List;
-
-import javax.inject.*;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,12 +10,16 @@ import org.pingpong.onequarkusapp.dominio.Orden;
 import org.pingpong.onequarkusapp.dominio.Usuaria;
 
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 
 @QuarkusTest
 public class ServiceTest {
 
     @PersistenceContext
-    EntityManager em;
+    jakarta.persistence.EntityManager em;
 
     @Inject
     ServiceOlli servicio;
@@ -67,7 +64,7 @@ public class ServiceTest {
 	 */
 	@Test 
 	public void test_mapping_orden() {
-		Orden pedido = em.find(Orden.class, 1L);
+		Orden pedido = em.find(Orden.class, 100L);
         Assertions.assertThat(pedido).isNotNull();
         Assertions.assertThat(pedido.getUser().getNombre()).isEqualTo("Doobey");
 		Assertions.assertThat(pedido.getItem().getNombre()).isEqualToIgnoringCase("Elixir of the Mongoose");
@@ -185,9 +182,10 @@ public class ServiceTest {
 		
         Assertions.assertThat(pedidos).isNotNull();
 		Assertions.assertThat(pedidos).hasSize(2);
-        Assertions.assertThat(pedidos.get(1).getUser().getNombre()).isEqualTo("Hermione");
-		Assertions.assertThat(pedidos.get(1).getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
-		em.find(Orden.class, pedidos.get(1).getId()).delete();
+        Assertions.assertThat(pedidos.get(0).getUser().getNombre()).isEqualTo("Hermione");
+		// AgedBrie tendra una id < 100L por lo que se encuentra en el index 0 de pedidos
+		Assertions.assertThat(pedidos.get(0).getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
+		em.find(Orden.class, pedidos.get(0).getId()).delete();
 	}
 
 	/**
@@ -270,11 +268,12 @@ public class ServiceTest {
 		
         Assertions.assertThat(pedidos).isNotNull();
 		Assertions.assertThat(pedidos).hasSize(3);
-        Assertions.assertThat(pedidos.get(1).getUser().getNombre()).isEqualTo("Hermione");
-		Assertions.assertThat(pedidos.get(1).getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
-		Assertions.assertThat(pedidos.get(2).getItem().getNombre()).isEqualToIgnoringCase("Elixir of the Mongoose");
-		em.find(Orden.class, pedidos.get(2).getId()).delete();
+        Assertions.assertThat(pedidos.get(0).getUser().getNombre()).isEqualTo("Hermione");
+		Assertions.assertThat(pedidos.get(0).getItem().getNombre()).isEqualToIgnoringCase("AgedBrie");
+		Assertions.assertThat(pedidos.get(1).getItem().getNombre()).isEqualToIgnoringCase("Elixir of the Mongoose");
+		Assertions.assertThat(pedidos.get(2).getItem().getNombre()).isEqualToIgnoringCase("+5 Dexterity Vest");
 		em.find(Orden.class, pedidos.get(1).getId()).delete();
+		em.find(Orden.class, pedidos.get(0).getId()).delete();
 	}
 
 	// No se permiten ordenes si el usuario no existe en la base de datos

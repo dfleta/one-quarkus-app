@@ -3,16 +3,15 @@ package org.pingpong.onequarkusapp.dominio;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name="t_ordenes")
@@ -64,7 +63,10 @@ public class Orden extends PanacheEntityBase {
 	// contenido min: loop, if-else, colecciones.
 	public static List<Orden> findByUserName(String name) {
 		List<Orden> ordenes = Orden.listAll();
-		List<Orden> ordenesByName = ordenes.stream().filter(o -> o.getUser().getNombre().equalsIgnoreCase(name)).collect(Collectors.toList());
+		List<Orden> ordenesByName = ordenes
+										.stream()
+										.filter(o -> o.getUser().getNombre().equalsIgnoreCase(name))
+										.collect(Collectors.toList());
 		return ordenesByName.isEmpty()? List.of(): ordenesByName;
 	}
 }
